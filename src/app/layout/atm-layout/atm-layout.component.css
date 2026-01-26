@@ -1,0 +1,104 @@
+/* --- CHASIS FÍSICO (El cuerpo gris) --- */
+.atm-physical-body {
+  background: linear-gradient(135deg, #bdc3c7 0%, #8e9eab 100%);
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-bottom: 5px solid #555;
+  border-right: 5px solid #555;
+  border-radius: 10px;
+  padding: 25px;
+  width: 95vw;
+  max-width: 900px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.2);
+  margin: auto;
+}
+
+/* --- MARCO DE LA PANTALLA (Bisel hundido) --- */
+.screen-bezel {
+  background-color: #2c3e50;
+  padding: 15px;
+  border-radius: 10px;
+  border-bottom: 2px solid rgba(255,255,255,0.1);
+  box-shadow: inset 0 5px 15px rgba(0,0,0,0.8);
+}
+
+/* --- CRISTAL DE LA PANTALLA --- */
+.screen-glass {
+  background-color: var(--screen-bg);
+  border: 4px inset #000; /* Borde hundido clásico */
+  border-radius: 4px; /* Las pantallas CRT tienen curvas leves */
+  position: relative;
+  overflow: hidden; /* Importante para el efecto CRT */
+  min-height: 500px;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.7); /* Viñeta oscura en esquinas */
+  display: flex;
+  flex-direction: column;
+}
+
+.screen-content {
+  position: relative;
+  z-index: 1; /* Debajo de las líneas de escaneo */
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* --- LA MAGIA: EFECTO MONITOR VIEJO (CRT) --- */
+.crt-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+              linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+  background-size: 100% 4px, 6px 100%; /* Tamaño de las líneas de escaneo */
+  z-index: 5; /* Encima del contenido */
+  pointer-events: none; /* Permite clicks a través */
+  opacity: 0.6;
+}
+
+/* --- TECLADO --- */
+.keypad-panel {
+  margin-top: 25px;
+  border-top: 2px solid #7f8c8d;
+  padding-top: 15px;
+}
+
+.brand-logo {
+  font-family: sans-serif;
+  font-weight: 900;
+  color: #555;
+  text-shadow: 1px 1px 0 #fff;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-align: right;
+  font-size: 0.8rem;
+}
+
+.keys-row {
+  display: flex;
+  gap: 15px;
+}
+
+.key-btn {
+  flex: 1;
+  height: 60px;
+  border: none;
+  font-weight: bold;
+  font-family: sans-serif;
+  font-size: 1.1rem;
+  color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 5px 0 rgba(0,0,0,0.4), 0 8px 10px rgba(0,0,0,0.3);
+  transition: transform 0.1s, box-shadow 0.1s;
+  text-transform: uppercase;
+}
+
+.key-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.4);
+}
+
+.btn-cancel { background: linear-gradient(#e74c3c, #c0392b); }
+.btn-clear { background: linear-gradient(#f1c40f, #f39c12); color: #000; }
+.btn-enter { background: linear-gradient(#2ecc71, #27ae60); }

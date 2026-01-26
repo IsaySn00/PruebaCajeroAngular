@@ -1,0 +1,8 @@
+<h3 class="text-center">SELECCIONE CAJERO</h3>
+
+<div class="menu-option"
+     *ngFor="let c of cajeros"
+     (click)="seleccionarCajero(c)">
+  ▶ {{ c.nombreCajero }}
+</div>
+

@@ -1,62 +1,18 @@
-<div class="atm-chassis">
-    <form [formGroup]="retiroForm" (ngSubmit)="confirmarRetiro()">
+<h3 class="text-center">RETIRO DE EFECTIVO</h3>
 
-        <div class="atm-screen p-4">
+<div class="saldo-container">
+  <span class="saldo-label">SALDO DISPONIBLE EN CUENTA:</span>
+  <div class="saldo-box">
+    $ {{ saldoDisponible | number:'1.2-2' }}
+  </div>
+</div>
 
-            <div class="row">
-                <div class="col-12 text-center">
-                    <h3 class="fw-bold terminal-text text-uppercase mb-0">Banco Nacional</h3>
-                    <p class="small text-white-50">TERMINAL: ATM-0054</p>
-                </div>
-            </div>
-
-            <div class="row align-items-center flex-grow-1">
-                <div class="col-12 col-md-6 text-center">
-                    <div class="bg-primary bg-opacity-50 p-3 mb-3 border border-light">
-                        <span class="d-block small text-uppercase mb-1">Saldo Actual</span>
-                        <h2 class="fw-bold text-warning mb-0">${{saldoDisponible}}</h2>
-                    </div>
-
-                    <label class="d-block text-start mb-2">INGRESE MONTO A RETIRAR:</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-black text-white border-white border-2 rounded-0">$</span>
-                        <input type="number" id="montoInput" class="form-control atm-input" placeholder="0.00"
-                            formControlName="monto">
-                    </div>
-                    <small class="text-white-50 mt-2 d-block">Use el teclado para ingresar otra cantidad</small>
-                </div>
-
-                <div class="col-3 d-none d-md-block mb-5 me-4">
-                    <div class="side-option option-right" (click)="setAmount(200)"><i
-                            class="bi bi-caret-right-fill"></i>
-                        $200.00</div>
-                    <div class="side-option option-right" (click)="setAmount(500)"><i
-                            class="bi bi-caret-right-fill"></i>
-                        $500.00</div>
-                    <div class="side-option option-right" (click)="setAmount(1000)"><i
-                            class="bi bi-caret-right-fill"></i>
-                        $1000.00</div>
-                </div>
-            </div>
-
-            <div class="text-center mt-3 border-top border-light pt-2">
-                <span class="blink-text">POR FAVOR SELECCIONE UNA OPCIÓN O INGRESE MONTO</span>
-            </div>
-        </div>
-
-        <div class="row mt-4 g-2">
-            <div class="row mt-4 g-2">
-                <div class="col-6">
-                    <button type="button" class="btn w-100 keypad-btn btn-clear text-uppercase" onclick="limpiar()">
-                        <i class="bi bi-backspace"></i> Borrar
-                    </button>
-                </div>
-                <div class="col-6">
-                    <button type="submit" class="btn w-100 keypad-btn btn-enter text-uppercase">
-                        Entrar <i class="bi bi-check-circle-fill"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </form>
+<div class="mt-4" [formGroup]="retiroForm">
+  <label class="d-block text-center text-white-50 mb-2">INGRESE CANTIDAD A RETIRAR:</label>
+  
+  <input type="number"
+         class="atm-input blink-caret"
+         formControlName="monto"
+         placeholder="0.00"
+         autofocus>
 </div>
