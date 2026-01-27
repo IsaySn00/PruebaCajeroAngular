@@ -22,4 +22,8 @@ export class CajeroService {
     return this.http.get<Result<Cajero[]>>(`${this.apiUrl}/listar`);
   }
 
+  llenarCajero(payload: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/llenar`, payload);
+  }
+
 }

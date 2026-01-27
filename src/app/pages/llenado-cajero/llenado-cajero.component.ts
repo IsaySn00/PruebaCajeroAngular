@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { CajeroService } from 'src/app/core/services/cajero.service';
 import { DenominacionService } from 'src/app/core/services/denominacion.service';
-import { Denominacion } from 'src/app/models/denominacion.model';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -9,26 +8,20 @@ import Swal from 'sweetalert2';
   templateUrl: './llenado-cajero.component.html',
   styleUrls: ['./llenado-cajero.component.css'],
 })
-export class LlenadoCajeroComponent implements OnInit{
-  
-  form!: FormGroup;
-  totalGeneral = 0;
-  idCajero = 1; 
+export class LlenadoCajeroComponent implements OnInit {
 
-  get denominaciones(): FormArray {
-    return this.form.get('denominaciones') as FormArray;
-  }
+
+  denominaciones: any[] = [];
+  totalGeneral = 0;
+  idCajero = 1;
+
 
   constructor(
-    private fb: FormBuilder,
-    private denominacionService: DenominacionService
-  ) {}
+    private denominacionService: DenominacionService,
+    private cajeroService : CajeroService
+  ) { }
 
   ngOnInit(): void {
-    this.form = this.fb.group({
-      denominaciones: this.fb.array([]),
-    });
-
     this.cargarDenominaciones();
   }
 
@@ -36,47 +29,47 @@ export class LlenadoCajeroComponent implements OnInit{
     this.denominacionService.getDenominaciones().subscribe({
       next: (res) => {
         if (res.correct && res.object) {
-          res.object.forEach((d) => this.agregarDenominacion(d));
+          this.denominaciones = res.object
+            .sort((a: any, b: any) => b.montoDenominacion - a.montoDenominacion)
+            .map((d: any) => ({
+              idDenominacion: d.idDenominacion,
+              monto: d.montoDenominacion,
+              cantidad: 0,
+              subtotal: 0
+            }));
         }
       },
-      error: () =>
-        Swal.fire('Error', 'No se pudieron cargar denominaciones', 'error'),
+      error: () => {
+        Swal.fire('Error', 'No se pudieron cargar denominaciones', 'error');
+      }
     });
   }
 
-  agregarDenominacion(den: Denominacion): void {
-    const group = this.fb.group({
-      idDenominacion: [den.idDenominacion],
-      monto: [den.montoDenominacion],
-      cantidad: [0],
-      subtotal: [0],
-    });
-
-    group.get('cantidad')?.valueChanges.subscribe((qty:any) => {
-      const subtotal = qty * den.montoDenominacion;
-      group.get('subtotal')?.setValue(subtotal, { emitEvent: false });
-      this.calcularTotal();
-    });
-
-    this.denominaciones.push(group);
+  onCantidadChange(item: any): void {
+    item.cantidad = Number(item.cantidad) || 0;
+    item.subtotal = item.cantidad * item.monto;
+    this.calcularTotal();
   }
 
   calcularTotal(): void {
-    this.totalGeneral = this.denominaciones.controls.reduce(
-      (sum, g) => sum + g.get('subtotal')!.value,
+    this.totalGeneral = this.denominaciones.reduce(
+      (sum, d) => sum + d.subtotal,
       0
     );
   }
 
   limpiar(): void {
-    this.denominaciones.controls.forEach((g) => {
-      g.patchValue({ cantidad: 0, subtotal: 0 });
+    this.denominaciones.forEach(d => {
+      d.cantidad = 0;
+      d.subtotal = 0;
     });
     this.totalGeneral = 0;
   }
 
   guardar(): void {
-    if (this.totalGeneral <= 0) {
+    const detalle = this.denominaciones.filter(d => d.cantidad > 0);
+
+    if (detalle.length === 0) {
       Swal.fire(
         'Advertencia',
         'Debe ingresar al menos una cantidad',
@@ -85,13 +78,34 @@ export class LlenadoCajeroComponent implements OnInit{
       return;
     }
 
-    const payload = {
-      idCajero: this.idCajero,
-      detalle: this.denominaciones.value.filter((d:any) => d.cantidad > 0),
-    };
+    const peticiones = detalle.map(d => {
+      const payload = {
+        idUsuario: 1,
+        idCajero: this.idCajero,
+        idDenominacion: d.idDenominacion,
+        cantidad: d.cantidad
+      };
 
-    console.log('Payload a enviar:', payload);
+      console.log('Enviando:', payload);
 
-    Swal.fire('Éxito', 'Cajero cargado correctamente', 'success');
+      return this.cajeroService.llenarCajero(payload);
+    });
+
+    Promise.all(peticiones.map(p => p.toPromise()))
+      .then(() => {
+        Swal.fire(
+          'Éxito',
+          'Cajero llenado correctamente',
+          'success'
+        );
+        this.limpiar();
+      })
+      .catch(() => {
+        Swal.fire(
+          'Error',
+          'Error al llenar el cajero',
+          'error'
+        );
+      });
   }
 }

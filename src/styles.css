@@ -1,17 +1,15 @@
-/* === VARIABLES DEL SISTEMA === */
 :root {
-  --atm-chassis: #8e9eab;         /* Gris metalico claro */
-  --atm-shadow: #5d6d7e;          /* Sombra metal */
-  --screen-bg: #002b55;           /* Azul profundo de fondo */
-  --screen-glow: #004e92;         /* Resplandor azul */
-  --text-primary: #e0e0e0;        /* Blanco hueso */
-  --neon-green: #39ff14;          /* Verde terminal */
-  --neon-amber: #ffbf00;          /* Ambar precaución */
-  --neon-red: #ff073a;            /* Rojo error */
-  --font-retro: 'Courier New', Courier, monospace; /* Fuente obligatoria */
+  --atm-chassis: #8e9eab;        
+  --atm-shadow: #5d6d7e;          
+  --screen-bg: #002b55;          
+  --screen-glow: #004e92;         
+  --text-primary: #e0e0e0;      
+  --neon-green: #39ff14;         
+  --neon-amber: #ffbf00;         
+  --neon-red: #ff073a;            
+  --font-retro: 'Courier New', Courier, monospace; 
 }
 
-/* Fondo de la "Habitación" donde está el cajero */
 body {
   background-color: #1a1a1a;
   background-image: radial-gradient(circle, #2c3e50 0%, #000000 100%);
@@ -23,14 +21,12 @@ body {
   font-family: var(--font-retro);
 }
 
-/* Utilitarios para textos brillantes */
 .blink-text { animation: blink 1.5s infinite; }
 .text-neon-green { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green); }
 .text-neon-amber { color: var(--neon-amber); text-shadow: 0 0 5px var(--neon-amber); }
 
 @keyframes blink { 50% { opacity: 0; } }
 
-/* Reset de inputs para que parezcan de terminal en toda la app */
 input[type=number], input[type=text] {
   font-family: var(--font-retro) !important;
   border-radius: 0 !important;

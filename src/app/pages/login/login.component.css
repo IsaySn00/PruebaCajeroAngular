@@ -1,0 +1,88 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 0 20px;
+}
+
+.bank-logo {
+  color: var(--text-primary, #e0e0e0);
+  font-size: 0.4rem; 
+  line-height: 0.4rem;
+  font-weight: bold;
+  opacity: 0.8;
+  margin-bottom: 10px;
+  text-shadow: 0 0 5px rgba(255,255,255,0.5);
+}
+
+.welcome-text {
+  color: var(--neon-amber, #ffbf00);
+  letter-spacing: 4px;
+  border-bottom: 1px solid var(--neon-amber, #ffbf00);
+  display: inline-block;
+  padding-bottom: 5px;
+  margin-bottom: 30px;
+}
+
+.terminal-label {
+  display: block;
+  color: var(--text-primary, #ccc);
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.atm-input {
+  width: 100%;
+  background-color: #000;
+  border: 1px solid #333;
+  border-bottom: 3px solid var(--neon-green, #39ff14);
+  color: var(--neon-green, #39ff14);
+  font-family: 'Courier New', monospace;
+  font-size: 1.5rem;
+  padding: 10px;
+  outline: none;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+
+.atm-input:focus {
+  background-color: rgba(57, 255, 20, 0.1);
+  box-shadow: 0 0 15px var(--neon-green, #39ff14);
+  border-bottom-color: #fff;
+}
+
+.password-field {
+  letter-spacing: 10px;
+  font-weight: 900;
+}
+
+.error-msg {
+  color: var(--neon-red, #ff073a);
+  font-size: 0.8rem;
+  margin-top: 5px;
+  text-shadow: 0 0 5px var(--neon-red, #ff073a);
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+.footer-instruction {
+  text-align: center;
+  border-top: 1px dashed #555;
+  padding-top: 20px;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}

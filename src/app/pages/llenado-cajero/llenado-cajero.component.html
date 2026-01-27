@@ -1,4 +1,4 @@
-<div class="admin-header">** SYSTEM ADMIN :: CASH REPLENISHMENT MODE **</div>
+<div class="admin-header">** ADMIN :: LLENADO DE CAJERO **</div>
 
 <div class="d-flex justify-content-between mb-2 small">
   <span>TERMINAL ID: ATM-0054</span>
@@ -15,25 +15,17 @@
         <th width="30%" class="text-end">SUBTOTAL</th>
       </tr>
     </thead>
-    <tbody formArrayName="denominaciones">
-      <tr
-        *ngFor="let d of denominaciones.controls; let i = index"
-        [formGroupName]="i"
-      >
-        <td>{{ d.value.idDenominacion }}</td>
+    <tbody>
+      <tr *ngFor="let d of denominaciones">
+        <td>{{ d.idDenominacion }}</td>
 
-        <td>$ {{ d.value.monto | number : "1.2-2" }}</td>
+        <td>$ {{ d.monto | number : "1.2-2" }}</td>
 
         <td>
-          <input
-            type="number"
-            class="terminal-input"
-            min="0"
-            formControlName="cantidad"
-          />
+          <input type="number" min="0" class="terminal-input" [(ngModel)]="d.cantidad" (input)="onCantidadChange(d)" />
         </td>
 
-        <td class="text-end">$ {{ d.value.subtotal | number : "1.2-2" }}</td>
+        <td class="text-end">$ {{ d.subtotal | number : "1.2-2" }}</td>
       </tr>
     </tbody>
   </table>
@@ -54,10 +46,7 @@
     </button>
   </div>
   <div class="col-4">
-    <button
-      class="btn btn-primary w-100 btn-admin border-light"
-      (click)="guardar()"
-    >
+    <button class="btn btn-primary w-100 btn-admin border-light" (click)="guardar()">
       F10 GUARDAR
     </button>
   </div>

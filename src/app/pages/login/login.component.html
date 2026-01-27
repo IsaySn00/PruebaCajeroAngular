@@ -1,0 +1,54 @@
+<div class="login-container" [formGroup]="loginForm">
+  
+  <div class="text-center mb-4">
+    <pre class="bank-logo">                               
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       
+       %% ......................... %%       
+       %% %%%%%%%%%%%%%%%%%%%%#%%%% %%       
+       %% %..%%%%%%%%% %%%%%%%%%..% %%       
+          % %% .%%%%%.%%%%%%%. %%.%          
+          % %% .%%%%-%%-%% %%%%%..%          
+          % .%%%%%%%%#.#%% %%%%%%%%          
+          %%%%%%%%%%%%%%%%%%%:.%%%%%         
+          +++++++++++++++++++.%%%%%.         
+          ....     .%%%%%%% %%%%%%%          
+          %%%%      %%%%%% %%%%%%%           
+          %%%%       %%%%%%%%%%%%            
+        .%%%%%%#      %%%%%%%. .%%%.         
+          %%%%.         . .%%%%%%%           
+           %%.         .%%%%#                
+    </pre>
+    <h4 class="welcome-text">SISTEMA FINANCIERO</h4>
+  </div>
+
+  <div class="input-group mb-4">
+    <label class="terminal-label">NUMERO DE CUENTA:</label>
+    <input 
+      type="text" 
+      class="atm-input" 
+      formControlName="numeroCuenta"
+      placeholder="Ingrese cuenta"
+      autocomplete="off"
+      autofocus
+    >
+    <div *ngIf="loginForm.get('numeroCuenta')?.touched && loginForm.get('numeroCuenta')?.invalid" class="error-msg">
+      * CUENTA REQUERIDA
+    </div>
+  </div>
+
+  <div class="input-group mb-4">
+    <label class="terminal-label">CODIGO DE SEGURIDAD (NIP):</label>
+    <input 
+      type="password" 
+      class="atm-input password-field" 
+      formControlName="nip"
+      placeholder="****"
+      maxlength="4"
+      autocomplete="off"
+    >
+    <div *ngIf="loginForm.get('nip')?.touched && loginForm.get('nip')?.invalid" class="error-msg">
+      * NIP DE 4 DIGITOS REQUERIDO
+    </div>
+  </div>
+
+</div>
