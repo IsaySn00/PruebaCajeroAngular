@@ -1,8 +1,10 @@
+import { Location } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { AtmKeypadService } from 'src/app/core/services/atm-keypad.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { CajeroService } from 'src/app/core/services/cajero.service';
 import { CuentaService } from 'src/app/core/services/cuenta.service';
 import { RetiroDTO } from 'src/app/models/retiro.dto';
@@ -18,15 +20,19 @@ export class CajeroComponent implements OnInit, OnDestroy {
   retiroForm!: FormGroup;
   saldoDisponible: number = 0;
   idCajero!: number;
+  idUsuario = this.authService.getIdUsuario();
   private enterSubscription: Subscription | undefined;
   private clearSubscription: Subscription | undefined;
+  private cancelSubscription: Subscription | undefined;
 
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private cajeroService: CajeroService,
     private cuentaService: CuentaService,
-    private keypadService: AtmKeypadService
+    private keypadService: AtmKeypadService,
+    private authService: AuthService,
+    private location: Location
   ) { }
 
   ngOnInit(): void {
@@ -48,6 +54,10 @@ export class CajeroComponent implements OnInit, OnDestroy {
     this.clearSubscription = this.keypadService.clearAction$.subscribe(() => {
       this.retiroForm.reset();
     });
+
+    this.cancelSubscription = this.keypadService.cancelAction$.subscribe(() => {
+      this.location.back();
+    })
   }
 
   setAmount(amount: number): void {
@@ -60,8 +70,9 @@ export class CajeroComponent implements OnInit, OnDestroy {
       return
     }
 
+
     const retiroDTO: RetiroDTO = {
-      idUsuario: 1,
+      idUsuario: this.idUsuario,
       idCajero: this.idCajero,
       monto: this.retiroForm.value.monto
     };
@@ -70,11 +81,28 @@ export class CajeroComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.correct) {
-            Swal.fire('Operación exitosa', response.object, 'success');
+
+            const iconModal = (response.SpStatus != 1) ? "error" : "success";
+            const titleModal = (response.SpStatus != 1) ? "Error al realizar la operación" : "Operación Exitosa";
+            console.log(response.SpStatus, typeof response.SpStatus);
+
+            Swal.fire({
+              title: titleModal,
+              text: response.object,
+              icon: iconModal,
+              background: '#000',
+              color: '#0f0',
+            });
             this.retiroForm.reset();
             this.consultarSaldo();
           } else {
-            Swal.fire('Error', response.object, 'error');
+            Swal.fire({
+              title: 'Error',
+              text: response.object,
+              icon: 'error',
+              background: '#000',
+              color: '#0f0'
+            });
           }
         },
         error: () => {
@@ -85,7 +113,7 @@ export class CajeroComponent implements OnInit, OnDestroy {
   }
 
   private consultarSaldo() {
-    this.cuentaService.getMontoCuentaUsuario(1)
+    this.cuentaService.getMontoCuentaUsuario(this.idUsuario)
       .subscribe({
         next: (response) => {
           this.saldoDisponible = response.object;
@@ -102,6 +130,10 @@ export class CajeroComponent implements OnInit, OnDestroy {
     }
     if (this.clearSubscription) {
       this.clearSubscription.unsubscribe();
+    }
+
+    if (this.cancelSubscription) {
+      this.cancelSubscription.unsubscribe();
     }
   }
 

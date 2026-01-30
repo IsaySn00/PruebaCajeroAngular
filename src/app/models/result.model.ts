@@ -3,5 +3,6 @@ export interface Result<T = any>{
     status: number;
     errorMessage?: string;
     object?: T,
-    objects?: [T]
+    objects?: [T],
+    SpStatus?: T
 }

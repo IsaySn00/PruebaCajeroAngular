@@ -1,8 +1,23 @@
 <h3 class="text-center">SELECCIONE CAJERO</h3>
 
-<div class="menu-option"
-     *ngFor="let c of cajeros"
-     (click)="seleccionarCajero(c)">
-  ▶ {{ c.nombreCajero }}
+<div *ngIf="isAdmin" class="admin-bar mb-3">
+  <small>>> ADMINISTRADOR <<</small>
 </div>
 
+<div class="menu-list">
+  <div class="menu-option" 
+       *ngFor="let c of cajeros" 
+       (click)="seleccionarCajero(c)">
+    
+    <span class="cajero-name">
+      <span class="arrow">▶</span> {{ c.nombreCajero }}
+    </span>
+
+    <button *ngIf="isAdmin" 
+            class="sys-btn" 
+            (click)="irLlenado(c); $event.stopPropagation()">
+      [ LLENADO DE CAJERO ]
+    </button>
+    
+  </div>
+</div>

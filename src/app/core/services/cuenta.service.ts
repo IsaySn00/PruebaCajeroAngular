@@ -12,7 +12,7 @@ export class CuentaService {
 
   constructor(private http: HttpClient) { }
 
-  getMontoCuentaUsuario(idUsuario:number): Observable<Result>{
+  getMontoCuentaUsuario(idUsuario:number | null): Observable<Result>{
     return this.http.get<Result>(`${this.apiUrl}/monto?idUsuario=${idUsuario}`);
   }
 }

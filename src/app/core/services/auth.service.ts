@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +27,25 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  logout(): void {
+  logout(): Observable<any> {
+    const token = this.obtenerToken();
+
+    return this.http.post(
+      `${this.baseUrl}/logout`,
+      {},
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`
+        })
+      }
+    ).pipe(
+      tap(() => {
+        this.limpiarSesion();
+      })
+    );
+  }
+
+  limpiarSesion(): void {
     localStorage.removeItem('token');
   }
 
@@ -40,6 +59,23 @@ export class AuthService {
 
     const payload = token.split('.')[1];
     return JSON.parse(atob(payload));
+  }
+
+  isAdmin(): boolean {
+    const token = this.obtenerToken();
+    if (!token) return false;
+
+    const decoded: any = jwtDecode(token);
+
+    return decoded.roles?.some((r: any) => r.authority === 'ROLE_admin');
+  }
+
+  getIdUsuario(): number | null {
+    const token = this.obtenerToken();
+    if (!token) return null;
+
+    const decoded: any = jwtDecode(token);
+    return decoded.idUsuario ?? null;
   }
 
 }

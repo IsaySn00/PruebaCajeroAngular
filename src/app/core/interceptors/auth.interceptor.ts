@@ -11,7 +11,7 @@ import { AuthService } from '../services/auth.service';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   intercept(
     req: HttpRequest<any>,
@@ -23,6 +23,11 @@ export class AuthInterceptor implements HttpInterceptor {
     if (!token) {
       return next.handle(req);
     }
+
+    if (req.url.includes('/auth/login') || req.url.includes('/auth/logout')) {
+      return next.handle(req);
+    }
+
 
     const authReq = req.clone({
       setHeaders: {

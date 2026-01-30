@@ -6,6 +6,7 @@ import { LlenadoCajeroComponent } from './pages/llenado-cajero/llenado-cajero.co
 import { AtmLayoutComponent } from './layout/atm-layout/atm-layout.component';
 import { LoginComponent } from './pages/login/login.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { AdminGuard } from './core/guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -20,7 +21,7 @@ const routes: Routes = [
         children: [
           { path: '', component: MenuCajeroComponent },
           { path: 'retiro/:idCajero', component: CajeroComponent },
-          { path: 'admin/llenado/:idCajero', component: LlenadoCajeroComponent },
+          { path: 'admin/llenado/:idCajero', component: LlenadoCajeroComponent, canActivate: [AdminGuard] },
         ]
       }
     ]

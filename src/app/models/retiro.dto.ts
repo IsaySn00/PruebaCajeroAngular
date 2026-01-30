@@ -1,5 +1,5 @@
 export interface RetiroDTO{
-    idUsuario:number;
+    idUsuario:number | null;
     idCajero:number;
     monto:number;
 }

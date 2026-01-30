@@ -12,7 +12,6 @@ export class AtmLayoutComponent {
   constructor(private router: Router, private keypadService: AtmKeypadService) {}
 
   aceptar() {
-    console.log('LAYOUT: Botón verde presionado'); // Debug
     this.keypadService.notifyEnter();
   }
 

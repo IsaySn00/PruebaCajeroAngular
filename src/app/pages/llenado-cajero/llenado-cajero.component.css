@@ -3,6 +3,7 @@
   flex-direction: column;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.3); 
+  overflow: hidden;
 }
 
 .admin-header {
@@ -13,14 +14,16 @@
   padding: 5px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  flex-shrink: 0;
 }
 
 .table-container {
-  flex-grow: 1;
-  overflow-y: auto;
+  flex: 1;
+  overflow-y: auto; 
   border: 2px solid #555;
-  background: #000; 
-  margin: 10px 0;
+  background: #000;
+  margin: 10px 0;  
+  min-height: 0;
 }
 
 .table-admin {
@@ -65,6 +68,7 @@
   justify-content: space-between;
   font-weight: bold;
   text-shadow: 0 0 10px var(--neon-green);
+  flex-shrink: 0;
 }
 
 ::-webkit-scrollbar { width: 15px; background: #000; }

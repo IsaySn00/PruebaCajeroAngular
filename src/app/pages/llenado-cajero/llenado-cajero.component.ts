@@ -1,6 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AtmKeypadService } from 'src/app/core/services/atm-keypad.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { CajeroService } from 'src/app/core/services/cajero.service';
 import { DenominacionService } from 'src/app/core/services/denominacion.service';
+import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -8,20 +14,39 @@ import Swal from 'sweetalert2';
   templateUrl: './llenado-cajero.component.html',
   styleUrls: ['./llenado-cajero.component.css'],
 })
-export class LlenadoCajeroComponent implements OnInit {
+export class LlenadoCajeroComponent implements OnInit, OnDestroy {
 
+  constructor(
+    private route: ActivatedRoute,
+    private denominacionService: DenominacionService,
+    private cajeroService: CajeroService,
+    private authService: AuthService,
+    private keypadService: AtmKeypadService,
+    private location: Location
+  ) { }
 
   denominaciones: any[] = [];
   totalGeneral = 0;
-  idCajero = 1;
+  idCajero!: number;
+  private enterSubscription: Subscription | undefined;
+  private clearSubscription: Subscription | undefined;
+  private cancelSubscription: Subscription | undefined;
 
-
-  constructor(
-    private denominacionService: DenominacionService,
-    private cajeroService : CajeroService
-  ) { }
 
   ngOnInit(): void {
+
+    this.enterSubscription = this.keypadService.enterAction$.subscribe(() => {
+      this.llenarCajero();
+    });
+
+    this.clearSubscription = this.keypadService.clearAction$.subscribe(() => {
+      this.limpiar();
+    });
+
+    this.cancelSubscription = this.keypadService.cancelAction$.subscribe(() => {
+      this.location.back();
+    })
+    this.idCajero = Number(this.route.snapshot.paramMap.get('idCajero'));
     this.cargarDenominaciones();
   }
 
@@ -66,46 +91,69 @@ export class LlenadoCajeroComponent implements OnInit {
     this.totalGeneral = 0;
   }
 
-  guardar(): void {
-    const detalle = this.denominaciones.filter(d => d.cantidad > 0);
+  llenarCajero(): void {
+    const detalle = this.denominaciones.filter((d: any) => d.cantidad > 0);
 
     if (detalle.length === 0) {
-      Swal.fire(
-        'Advertencia',
-        'Debe ingresar al menos una cantidad',
-        'warning'
-      );
+      Swal.fire('Advertencia', 'No hay denominaciones ingresadas', 'warning');
       return;
     }
 
-    const peticiones = detalle.map(d => {
+    const idUsuario = this.authService.getIdUsuario();
+
+    const peticiones$ = detalle.map((d: any) => {
       const payload = {
-        idUsuario: 1,
+        idUsuario,
         idCajero: this.idCajero,
         idDenominacion: d.idDenominacion,
         cantidad: d.cantidad
       };
 
-      console.log('Enviando:', payload);
-
       return this.cajeroService.llenarCajero(payload);
     });
 
-    Promise.all(peticiones.map(p => p.toPromise()))
-      .then(() => {
-        Swal.fire(
-          'Éxito',
-          'Cajero llenado correctamente',
-          'success'
+    forkJoin(peticiones$).subscribe({
+      next: (responses) => {
+
+        const error = responses.find(r =>
+          !r.correct || Number(r.SpStatus) === 0
         );
+
+        if (error) {
+
+          Swal.fire({
+            title: 'Error en llenado',
+            text: error.object || 'No se pudo llenar el cajero',
+            icon: 'error',
+            background: '#000',
+            color: '#0f0'
+          });
+          return;
+        }
+
+        Swal.fire({
+          title: 'Operación Exitosa',
+          text: 'Cajero llenado correctamente',
+          icon: 'success',
+          background: '#000',
+          color: '#0f0'
+        });
+
         this.limpiar();
-      })
-      .catch(() => {
+      },
+      error: () => {
         Swal.fire(
           'Error',
-          'Error al llenar el cajero',
+          'Error al conectar con el servicio',
           'error'
         );
-      });
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.cancelSubscription) {
+      this.cancelSubscription.unsubscribe();
+    }
   }
 }
